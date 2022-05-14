@@ -1,6 +1,7 @@
 package externalip
 
 import (
+	"net"
 	"net/http"
 	"strings"
 	"time"
@@ -25,7 +26,21 @@ func parseTraceResponseBody(body []byte) map[string]string {
 // newExternalIPClient generates a new HTTP client with a timeout
 // suitable to be used to check for the current IP
 func newExternalIPClient(timeout int) *http.Client {
-	c := http.DefaultClient
+	/*c := http.DefaultClient
 	c.Timeout = time.Duration(timeout) * time.Second
-	return c
+	return c*/
+
+	return &http.Client{
+		Transport: &http.Transport{
+			Proxy: http.ProxyFromEnvironment,
+			DialContext: (&net.Dialer{
+				Timeout:   time.Duration(timeout) * time.Second,
+				KeepAlive: time.Duration(timeout) * time.Second,
+			}).DialContext,
+			MaxIdleConns:          10,
+			IdleConnTimeout:       time.Duration(timeout) * time.Second,
+			TLSHandshakeTimeout:   time.Duration(timeout) * time.Second,
+			ExpectContinueTimeout: 2 * time.Second,
+		},
+	}
 }
