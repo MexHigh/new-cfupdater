@@ -1,0 +1,38 @@
+{
+    // NOT API GLOBAL KEY; needs scope 'DNS:Edit' for every zone mentioned below
+    "api_token": "some-secret-key",
+    // set the default update behaviour for
+    "update_ipv4_default": true,
+    "update_ipv6_default": true,
+    "zones": {
+        "leon.wtf": [
+            {
+                // only updates aaaa if it exists, setting proxy to true
+                "name": "leon.wtf",
+                "update_ipv4": false,
+                "proxy": true
+            },
+            {
+                // only updates a if it exists, leaving proxy as it is
+                "name": "home.leon.wtf",
+                "update_ipv6": false
+            },
+            {
+                // creates (and overwrites) both a and aaaa, setting proxy to false
+                "name": "ide.leon.wtf",
+                "create": true,
+                "proxy": false
+            },
+            {
+                // updates both a and aaaa if they exist, leaving proxy as it is
+                "name": "status.leon.wtf"
+            }
+        ],
+        "leon-schmidt.dev": [
+            {
+                // updates both a and aaaa if they exist, leaving proxy as it is
+                "name": "leon-schmidt.dev"
+            }
+        ]
+    }
+}
