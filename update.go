@@ -32,17 +32,17 @@ func GetAllZoneIDs() error {
 
 func update(v version, newIP string) error {
 
-	for zone, records := range conf.Zones {
+	for confZone, confRecords := range conf.Zones {
 
-		zoneID := zoneIDs[zone]
+		zoneID := zoneIDs[confZone]
 
-		for _, record := range records {
+		for _, confRecord := range confRecords {
 
 			// evaluate record type
 			var recType string
-			if v == v4 && record.UpdateIPv4 {
+			if v == v4 && confRecord.UpdateIPv4 {
 				recType = "A"
-			} else if v == v6 && record.UpdateIPv6 {
+			} else if v == v6 && confRecord.UpdateIPv6 {
 				recType = "AAAA"
 			} else {
 				fmt.Println("kaputt")
@@ -52,7 +52,7 @@ func update(v version, newIP string) error {
 			// get matching record(s) for the zone
 			records, err := cfAPI.DNSRecords(context.Background(), zoneID, cloudflare.DNSRecord{
 				Type: recType,
-				Name: record.Name,
+				Name: confRecord.Name,
 			})
 			if err != nil {
 				return err
@@ -63,18 +63,19 @@ func update(v version, newIP string) error {
 				// record does not exits
 				// create if record.Create = true
 
-				if !record.Create {
-					log.Printf("Update of record %s %s (Zone: %s) skipped (does not exist and key \"create\" is false)\n", recType, record.Name, zone)
+				if !confRecord.Create {
+					log.Printf("Update of record %s %s (Zone: %s) skipped (does not exist and key \"create\" is false)\n", recType, confRecord.Name, confZone)
 					continue
 				}
 
-				proxy := record.Proxy == config.ProxyActivate // ProxyPreserve means false in this case !!!
+				proxied := confRecord.Proxy == config.ProxyActivate // config.ProxyPreserve means false by default !!!
+
 				resp, err := cfAPI.CreateDNSRecord(context.Background(), zoneID, cloudflare.DNSRecord{
 					Type:    recType,
-					Name:    record.Name,
+					Name:    confRecord.Name,
 					Content: newIP,
 					TTL:     1, // automatic
-					Proxied: &proxy,
+					Proxied: &proxied,
 				})
 				if err != nil {
 					return err
@@ -85,11 +86,17 @@ func update(v version, newIP string) error {
 
 			} else if l == 1 {
 
-				// change existing record and push
-				newRecord := records[0]
-				newRecord.Content = newIP
+				thisRecord := records[0]
+				newRecord := thisRecord
 
-				if err := cfAPI.UpdateDNSRecord(context.Background(), zoneID, records[0].ID, newRecord); err != nil {
+				// change existing record and push
+				newRecord.Content = newIP
+				if confRecord.Proxy != config.ProxyPreserve {
+					proxied := confRecord.Proxy == config.ProxyActivate
+					newRecord.Proxied = &proxied
+				} // else leave newRecord.Proxied untouched ("ProxyPreserve")
+
+				if err := cfAPI.UpdateDNSRecord(context.Background(), zoneID, thisRecord.ID, newRecord); err != nil {
 					return err
 				}
 
@@ -98,6 +105,13 @@ func update(v version, newIP string) error {
 			}
 
 		}
+		var updatedVersion string
+		if v == v4 {
+			updatedVersion = "IPv4"
+		} else {
+			updatedVersion = "IPv6"
+		}
+		log.Printf("%s updates for zone %s successfull", updatedVersion, confZone)
 
 	}
 

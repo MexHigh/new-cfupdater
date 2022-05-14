@@ -11,8 +11,8 @@ import (
 )
 
 var (
-	cfAPI    *cloudflare.API
 	confPath *string = flag.String("config", "./config.json", "Path to the config.json file")
+	cfAPI    *cloudflare.API
 	conf     *config.Config
 )
 
@@ -45,7 +45,6 @@ func main() {
 		panic(err)
 	}
 
-	//update(v4, "1.1.1.1")
-	err = update(v6, "2.2.2.2")
-	fmt.Println(err)
+	StartSchedules(30) // blocking
+
 }
