@@ -10,23 +10,29 @@ import (
 )
 
 var (
-	lastIPv4 = &externalip.IPv4{}
-	lastIPv6 = &externalip.IPv6{}
+	lastIPv4 string
+	lastIPv6 string
 )
 
 func v4Schedule() {
-	currentIPv4 := externalip.GetIPv4()
-	if currentIPv4.Addr != lastIPv4.Addr {
-		log.Printf("Detected IPv4 change (was '%s', is '%s')", lastIPv4.Addr, currentIPv4.Addr)
+	currentIPv4, err := externalip.GetIPv4()
+	if err != nil {
+		panic(err)
+	}
+	if currentIPv4 != lastIPv4 {
+		log.Printf("Detected IPv4 change (was '%s', is '%s')", lastIPv4, currentIPv4)
 		UpdateIPv4(currentIPv4)
 	}
 	lastIPv4 = currentIPv4
 }
 
 func v6Schedule() {
-	currentIPv6 := externalip.GetIPv6()
-	if currentIPv6.Addr != lastIPv6.Addr {
-		log.Printf("Detected IPv6 change (was '%s', is '%s')", lastIPv6.Addr, currentIPv6.Addr)
+	currentIPv6, err := externalip.GetIPv6()
+	if err != nil {
+		panic(err)
+	}
+	if currentIPv6 != lastIPv6 {
+		log.Printf("Detected IPv6 change (was '%s', is '%s')", lastIPv6, currentIPv6)
 		UpdateIPv6(currentIPv6)
 	}
 	lastIPv6 = currentIPv6

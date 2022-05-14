@@ -7,7 +7,6 @@ import (
 	"log"
 
 	"git.leon.wtf/leon/new-cfupdater/config"
-	"git.leon.wtf/leon/new-cfupdater/externalip"
 	"github.com/cloudflare/cloudflare-go"
 )
 
@@ -106,10 +105,10 @@ func update(v version, newIP string) error {
 
 }
 
-func UpdateIPv4(newIP *externalip.IPv4) error {
-	return update(v4, newIP.Addr)
+func UpdateIPv4(newIP string) error {
+	return update(v4, newIP)
 }
 
-func UpdateIPv6(newIP *externalip.IPv6) error {
-	return update(v6, newIP.Addr)
+func UpdateIPv6(newIP string) error {
+	return update(v6, newIP)
 }
