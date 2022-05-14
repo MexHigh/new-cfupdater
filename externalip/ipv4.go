@@ -3,11 +3,11 @@ package externalip
 import (
 	"errors"
 	"io"
-	"net/http"
 )
 
-func GetIPv4() (string, error) {
-	resp, err := http.Get("https://1.1.1.1/cdn-cgi/trace")
+func GetIPv4(timeout int) (string, error) {
+	c := newExternalIPClient(timeout)
+	resp, err := c.Get("https://1.1.1.1/cdn-cgi/trace")
 	if err != nil {
 		return "", err
 	}

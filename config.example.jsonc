@@ -4,6 +4,10 @@
     // set the default update behaviour for
     "update_ipv4_default": true,
     "update_ipv6_default": true,
+    // interval to check for ip changes in seconds (default: 60)
+    "check_interval": 30,
+    // client timeout while retrieving new ip in seconds (default: 5)
+    "check_timeout": 10,
     "zones": {
         "leon.wtf": [
             {

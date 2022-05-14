@@ -24,7 +24,7 @@ func main() {
 
 	flag.Parse()
 
-	log.Println("Loading config from ", *confPath)
+	log.Println("Loading config from", *confPath)
 	confTemp, err := config.Load(*confPath)
 	if err != nil {
 		panic(err)
@@ -45,6 +45,6 @@ func main() {
 		panic(err)
 	}
 
-	StartSchedules(30) // blocking
+	StartSchedules(conf.CheckInterval) // blocking
 
 }

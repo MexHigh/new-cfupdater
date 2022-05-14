@@ -16,7 +16,7 @@ var (
 )
 
 func v4Schedule() {
-	currentIPv4, err := externalip.GetIPv4()
+	currentIPv4, err := externalip.GetIPv4(conf.CheckTimeout)
 	if err != nil {
 		log.Printf("Got error while getting IPv4: %s", err.Error())
 		return
@@ -30,7 +30,7 @@ func v4Schedule() {
 }
 
 func v6Schedule() {
-	currentIPv6, err := externalip.GetIPv6()
+	currentIPv6, err := externalip.GetIPv6(conf.CheckTimeout)
 	if err != nil {
 		log.Printf("Got error while getting IPv6: %s", err.Error())
 		return

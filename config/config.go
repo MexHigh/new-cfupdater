@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 )
 
@@ -53,15 +54,25 @@ type defaults struct {
 }
 
 type Config struct {
-	APIToken string `json:"api_token"`
-	defaults `json:",inline"`
-	Zones    map[string][]*Record `json:"zones"`
+	APIToken      string               `json:"api_token"`
+	CheckInterval int                  `json:"check_interval"`
+	CheckTimeout  int                  `json:"check_timeout"`
+	Zones         map[string][]*Record `json:"zones"`
+	defaults      `json:",inline"`
 }
 
 func (c *Config) setDefaults(plain map[string]interface{}) error {
 	if c.APIToken == "" {
 		return errors.New(`missing "api_token" key`)
 	}
+	if c.CheckInterval == 0 {
+		c.CheckInterval = 60
+	}
+	log.Printf(`"check_interval" set to %d seconds`, c.CheckInterval)
+	if c.CheckTimeout == 0 {
+		c.CheckTimeout = 5
+	}
+	log.Printf(`"check_timeout" set to %d seconds`, c.CheckTimeout)
 	if _, ok := plain["update_ipv4_default"]; !ok {
 		c.defaults.UpdateIPv4Default = true
 	}
