@@ -1,0 +1,6 @@
+Dockerfile
+docker-compose.yml
+.dockerignore
+.gitignore
+config.example.json
+config.example.jsonc

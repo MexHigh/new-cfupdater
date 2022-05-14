@@ -1,0 +1,14 @@
+version: '3'
+services:
+  
+  new-cfupdater:
+    image: registry.git.leon.wtf/leon/new-cfupdater:latest
+    #image: local/new-cfupdater:latest
+    #build: .
+    container_name: new-cfupdater
+    restart: always
+    network_mode: host
+    volumes:
+      - ./config.json:/app/config.json:ro
+    environment:
+      TZ: Europe/Berlin
