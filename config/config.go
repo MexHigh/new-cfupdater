@@ -108,6 +108,22 @@ func (c *Config) Validate() error {
 	return nil
 }
 
+// ConfiguresIPv6AtAll checks if any record is acutally
+// configured to update their AAAA records
+func (c *Config) ConfiguresIPv6AtAll() bool {
+	atAll := false
+outerLoop:
+	for _, records := range c.Zones {
+		for _, record := range records {
+			if record.UpdateIPv6 {
+				atAll = true
+				break outerLoop
+			}
+		}
+	}
+	return atAll
+}
+
 func Load(filename string) (*Config, error) {
 	jsonFile, err := os.Open(filename)
 	if err != nil {

@@ -23,13 +23,9 @@ func parseTraceResponseBody(body []byte) map[string]string {
 	return kvs
 }
 
-// newExternalIPClient generates a new HTTP client with a timeout
+// newExternalIPClient generates a new HTTP client with settings
 // suitable to be used to check for the current IP
 func newExternalIPClient(timeout int) *http.Client {
-	/*c := http.DefaultClient
-	c.Timeout = time.Duration(timeout) * time.Second
-	return c*/
-
 	return &http.Client{
 		Transport: &http.Transport{
 			Proxy: http.ProxyFromEnvironment,

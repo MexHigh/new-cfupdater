@@ -121,9 +121,11 @@ func StartSchedules(interval int) {
 	if err != nil {
 		panic(err)
 	}
-	v6CurrentJob, err = scheduler.Every(interval).Seconds().SingletonMode().Do(v6Schedule)
-	if err != nil {
-		panic(err)
+	if conf.ConfiguresIPv6AtAll() { // do not add the v6Schedule if no record wants to update AAAA records
+		v6CurrentJob, err = scheduler.Every(interval).Seconds().SingletonMode().Do(v6Schedule)
+		if err != nil {
+			panic(err)
+		}
 	}
 
 	//scheduler.StartAsync()
