@@ -28,7 +28,9 @@ func v4Schedule() {
 		emergencyModev4Set <- true
 		return
 	}
-	log.Printf("Got %s", currentIPv4)
+	if *verbose {
+		log.Printf("Got %s", currentIPv4)
+	}
 	emergencyModev4Set <- false
 	if currentIPv4 != lastIPv4 {
 		log.Printf("Detected IPv4 change (was '%s', is '%s')", lastIPv4, currentIPv4)
@@ -44,7 +46,9 @@ func v6Schedule() {
 		emergencyModev6Set <- true
 		return
 	}
-	log.Printf("Got %s", currentIPv6)
+	if *verbose {
+		log.Printf("Got %s", currentIPv6)
+	}
 	emergencyModev6Set <- false
 	if currentIPv6 != lastIPv6 {
 		log.Printf("Detected IPv6 change (was '%s', is '%s')", lastIPv6, currentIPv6)

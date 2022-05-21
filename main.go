@@ -12,6 +12,7 @@ import (
 
 var (
 	confPath *string = flag.String("config", "./config.json", "Path to the config.json file")
+	verbose  *bool   = flag.Bool("verbose", false, "Whether to print verbose output to stdout")
 	cfAPI    *cloudflare.API
 	conf     *config.Config
 )
