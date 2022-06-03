@@ -12,3 +12,4 @@ services:
       - ./config.json:/app/config.json:ro
     environment:
       TZ: Europe/Berlin
+    #command: "--verbose"
