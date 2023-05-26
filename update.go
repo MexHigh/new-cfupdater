@@ -45,7 +45,7 @@ func update(v version, newIP string) error {
 			} else if v == v6 && confRecord.UpdateIPv6 {
 				recType = "AAAA"
 			} else {
-				fmt.Println("kaputt")
+				// record type should not be updated
 				continue
 			}
 
