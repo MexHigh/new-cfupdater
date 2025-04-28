@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"git.leon.wtf/leon/new-cfupdater/config"
 	"github.com/cloudflare/cloudflare-go"
@@ -20,24 +21,33 @@ const (
 var zoneIDs = make(map[string]string)
 
 func GetAllZoneIDs() error {
+	zonesToRemove := make([]string, 0)
+
 	for zone := range conf.Zones {
 		zoneID, err := cfAPI.ZoneIDByName(zone)
 		if err != nil {
+			if strings.Contains(err.Error(), "zone could not be found") {
+				log.Printf("Zone '%s' not found, removing it from zone update list", zone)
+				zonesToRemove = append(zonesToRemove, zone)
+				continue
+			}
 			return err
 		}
 		zoneIDs[zone] = zoneID
 	}
+
+	for _, zone := range zonesToRemove {
+		delete(conf.Zones, zone)
+	}
+
 	return nil
 }
 
 func update(v version, newIP string) error {
-
 	for confZone, confRecords := range conf.Zones {
-
 		zoneID := zoneIDs[confZone]
 
 		for _, confRecord := range confRecords {
-
 			// evaluate record type
 			var recType string
 			if v == v4 && confRecord.UpdateIPv4 {
@@ -59,7 +69,6 @@ func update(v version, newIP string) error {
 			}
 
 			if l := len(records); l == 0 {
-
 				// record does not exits
 				// create if record.Create = true
 
@@ -85,7 +94,6 @@ func update(v version, newIP string) error {
 				}
 
 			} else if l == 1 {
-
 				thisRecord := records[0]
 				newRecord := thisRecord
 
@@ -99,24 +107,22 @@ func update(v version, newIP string) error {
 				if err := cfAPI.UpdateDNSRecord(context.Background(), zoneID, thisRecord.ID, newRecord); err != nil {
 					return err
 				}
-
 			} else {
 				return errors.New("got more than one record")
 			}
-
 		}
+
 		var updatedVersion string
 		if v == v4 {
 			updatedVersion = "IPv4"
 		} else {
 			updatedVersion = "IPv6"
 		}
-		log.Printf("%s updates for zone %s successfull", updatedVersion, confZone)
 
+		log.Printf("%s updates for zone %s successfull", updatedVersion, confZone)
 	}
 
 	return nil
-
 }
 
 func UpdateIPv4(newIP string) error {

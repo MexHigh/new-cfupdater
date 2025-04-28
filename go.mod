@@ -1,10 +1,13 @@
 module git.leon.wtf/leon/new-cfupdater
 
-go 1.17
+go 1.24.2
 
 require (
-	github.com/cloudflare/cloudflare-go v0.33.0 // indirect
-	github.com/go-co-op/gocron v1.13.0 // indirect
+	github.com/cloudflare/cloudflare-go v0.33.0
+	github.com/go-co-op/gocron v1.13.0
+)
+
+require (
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/robfig/cron/v3 v3.0.1 // indirect
 	golang.org/x/net v0.0.0-20210510120150-4163338589ed // indirect

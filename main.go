@@ -18,7 +18,6 @@ var (
 )
 
 func main() {
-
 	fmt.Println()
 	fmt.Println("  ~ New CFUpdater by leon.wtf ~  ")
 	fmt.Println()
@@ -47,5 +46,4 @@ func main() {
 	}
 
 	StartSchedules(conf.CheckInterval) // blocking
-
 }
