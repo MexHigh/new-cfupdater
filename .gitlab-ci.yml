@@ -5,9 +5,11 @@ build_an_push_image:
   stage: docker
   rules:
     - if: '$CI_COMMIT_BRANCH == "main"'
-  image: docker:dind
-  before_script:
-    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  tags:
+    - docker
+    - real-dind
+  image: docker:cli
   script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
     - docker build --pull -t $CI_REGISTRY_IMAGE:latest .
     - docker push $CI_REGISTRY_IMAGE:latest
